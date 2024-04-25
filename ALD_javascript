@@ -64,3 +64,35 @@ function resetBranchCounters() {
     localStorage.setItem(currentBranch + '_patron', '0');
     localStorage.setItem(currentBranch + '_library', '0');
 }
+
+function finalizeData() {
+    const printingCount = document.getElementById('printing').textContent;
+    const patronCount = document.getElementById('patron').textContent;
+    const libraryCount = document.getElementById('library').textContent;
+    const totalCount = document.getElementById('total').textContent;
+
+    // Create a formatted string that resembles a row in Excel
+    const dataString = `Branch: ${currentBranch}\tPrinting: ${printingCount}\tPatron: ${patronCount}\tLibrary: ${libraryCount}\tTotal: ${totalCount}`;
+
+    // Display this string in a textarea to allow easy copying
+    const output = document.createElement('textarea');
+    output.value = dataString;
+    output.rows = 1;
+    output.cols = 100; // Set the width of the textarea large enough to show the entire string
+    output.readOnly = true; // Prevent editing of the content
+
+    // Optional: Automatically select the text to make copying even easier
+    output.onclick = function() {
+        output.select();
+    };
+
+    // Clear any previous output and append the new data
+    const outputContainer = document.getElementById('outputContainer');
+    outputContainer.innerHTML = ''; // Clear previous outputs
+    outputContainer.appendChild(output); // Add the new output textarea
+
+    // Append the output container to the body or any specific section of your page
+    document.body.appendChild(outputContainer);
+}
+
+
