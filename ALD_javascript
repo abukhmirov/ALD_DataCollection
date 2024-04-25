@@ -1,0 +1,56 @@
+window.onload = function() {
+    loadCounts();
+    updateTotal();
+};
+
+function saveCounts() {
+    localStorage.setItem('printing', document.getElementById('printing').textContent);
+    localStorage.setItem('patron', document.getElementById('patron').textContent);
+    localStorage.setItem('library', document.getElementById('library').textContent);
+}
+
+function loadCounts() {
+    if (localStorage.getItem('printing')) {
+        document.getElementById('printing').textContent = localStorage.getItem('printing');
+    }
+    if (localStorage.getItem('patron')) {
+        document.getElementById('patron').textContent = localStorage.getItem('patron');
+    }
+    if (localStorage.getItem('library')) {
+        document.getElementById('library').textContent = localStorage.getItem('library');
+    }
+    updateTotal();
+}
+
+function updateTotal() {
+    const printingCount = parseInt(document.getElementById('printing').textContent);
+    const patronCount = parseInt(document.getElementById('patron').textContent);
+    const libraryCount = parseInt(document.getElementById('library').textContent);
+    document.getElementById('total').textContent = printingCount + patronCount + libraryCount;
+}
+
+function increment(category) {
+    const element = document.getElementById(category);
+    let currentCount = parseInt(element.textContent);
+    element.textContent = currentCount + 1;
+    updateTotal();
+    saveCounts();
+}
+
+function decrement(category) {
+    const element = document.getElementById(category);
+    let currentCount = parseInt(element.textContent);
+    if (currentCount > 0) {
+        element.textContent = currentCount - 1;
+        updateTotal();
+        saveCounts();
+    }
+}
+
+function clearData() {
+    localStorage.clear();
+    document.getElementById('printing').textContent = '0';
+    document.getElementById('patron').textContent = '0';
+    document.getElementById('library').textContent = '0';
+    document.getElementById('total').textContent = '0';
+}
