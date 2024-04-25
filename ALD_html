@@ -43,6 +43,9 @@
   </div>
   <button onclick="resetBranchCounters()">Clear Data</button>
   <script src="script.js"></script>
+  <button onclick="finalizeData()">Finalize</button>
+  <div id="outputContainer"></div>
+
 </body>
 
 </html>
