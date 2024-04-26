@@ -1,8 +1,9 @@
 let currentBranch = 'MA'; // Default branch on page load
+let interactionIdCounter = 0; // Counter to generate unique IDs
 
 window.onload = function() {
-    // Initialize counters and display when the page loads
     changeBranch(); // Load counts and update total for the default branch
+    interactionIdCounter = parseInt(localStorage.getItem(currentBranch + '_counter') || '0');
 };
 
 function changeBranch() {
@@ -11,22 +12,24 @@ function changeBranch() {
     updateTotal();
 }
 
-function saveCounts() {
-    // Save each counter's value in local storage with a key specific to the branch
-    localStorage.setItem(currentBranch + '_printing', document.getElementById('printing').textContent);
-    localStorage.setItem(currentBranch + '_patron', document.getElementById('patron').textContent);
-    localStorage.setItem(currentBranch + '_library', document.getElementById('library').textContent);
+function saveInteraction(category, countChange, note) {
+    interactionIdCounter++;
+    localStorage.setItem(currentBranch + '_counter', interactionIdCounter.toString());
+    let interactions = JSON.parse(localStorage.getItem(currentBranch + '_' + category + '_interactions') || '[]');
+    interactions.push({ id: interactionIdCounter, change: countChange, note: note });
+    localStorage.setItem(currentBranch + '_' + category + '_interactions', JSON.stringify(interactions));
 }
 
 function loadCounts() {
-    // Load counts from local storage or default to '0' if not previously set
-    document.getElementById('printing').textContent = localStorage.getItem(currentBranch + '_printing') || '0';
-    document.getElementById('patron').textContent = localStorage.getItem(currentBranch + '_patron') || '0';
-    document.getElementById('library').textContent = localStorage.getItem(currentBranch + '_library') || '0';
+    let categories = ['printing', 'patron', 'library'];
+    categories.forEach(category => {
+        let interactions = JSON.parse(localStorage.getItem(currentBranch + '_' + category + '_interactions') || '[]');
+        let totalCount = interactions.reduce((sum, interaction) => sum + interaction.change, 0);
+        document.getElementById(category).textContent = totalCount;
+    });
 }
 
 function updateTotal() {
-    // Update the total counter by summing all categories
     const printingCount = parseInt(document.getElementById('printing').textContent);
     const patronCount = parseInt(document.getElementById('patron').textContent);
     const libraryCount = parseInt(document.getElementById('library').textContent);
@@ -34,33 +37,54 @@ function updateTotal() {
 }
 
 function increment(category) {
-    // Increment the value of a counter when the '+' button is clicked
     const element = document.getElementById(category);
     let currentCount = parseInt(element.textContent);
+    const noteText = prompt("Enter note for " + category + " interaction:");
+    saveInteraction(category, 1, noteText);
     element.textContent = currentCount + 1;
     updateTotal();
-    saveCounts();
 }
 
 function decrement(category) {
-    // Decrement the value of a counter when the '-' button is clicked, if greater than 0
     const element = document.getElementById(category);
     let currentCount = parseInt(element.textContent);
     if (currentCount > 0) {
+        const noteText = prompt("Enter note for " + category + " interaction:");
+        saveInteraction(category, -1, noteText);
         element.textContent = currentCount - 1;
         updateTotal();
-        saveCounts();
     }
 }
 
 function resetBranchCounters() {
-    // Reset all counters for the current branch to '0' and update local storage
-    document.getElementById('printing').textContent = '0';
-    document.getElementById('patron').textContent = '0';
-    document.getElementById('library').textContent = '0';
+    ['printing', 'patron', 'library'].forEach(category => {
+        document.getElementById(category).textContent = '0';
+        localStorage.removeItem(currentBranch + '_' + category + '_interactions');
+    });
     updateTotal();
+}
 
-    localStorage.setItem(currentBranch + '_printing', '0');
-    localStorage.setItem(currentBranch + '_patron', '0');
-    localStorage.setItem(currentBranch + '_library', '0');
+function finalizeData() {
+    const categories = ['printing', 'patron', 'library'];
+    const outputContainer = document.getElementById('outputContainer');
+    outputContainer.innerHTML = '';
+    const now = new Date(); // Get the current date and time
+    const timestamp = now.toLocaleString(); // Format it as a readable string
+
+    categories.forEach(category => {
+        let interactions = JSON.parse(localStorage.getItem(currentBranch + '_' + category + '_interactions') || '[]');
+        interactions.forEach(interaction => {
+            const dataString = `Branch: ${currentBranch}\tCategory: ${category}\tChange: ${interaction.change}\tNote: ${interaction.note}\tID: ${interaction.id}\tTimestamp: ${timestamp}`;
+            const output = document.createElement('textarea');
+            output.value = dataString;
+            output.rows = 1;
+            output.cols = 100;
+            output.readOnly = true;
+            output.onclick = function() {
+                output.select();
+            };
+            outputContainer.appendChild(output);
+        });
+    });
+    document.body.appendChild(outputContainer);
 }
