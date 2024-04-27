@@ -42,6 +42,8 @@
   <button onclick="resetBranchCounters()">Clear Data</button>
   <script src="script.js"></script>
   <button onclick="finalizeData()">Finalize</button>
+  <button onclick="finalizeAllInteractions()">Finalize Day</button>
+  <div id="allInteractionsContainer"></div>
   <div id="outputContainer"></div>
 </body>
 </html>
@@ -69,4 +71,18 @@
     margin: 0 20px;
     font-size: 24px;
   }
+
+  #outputContainer div {
+      margin-bottom: 10px;
+  }
+  button {
+      margin-left: 10px;
+  }
+
+  #branchSelector {
+      font-size: 18px; /* Increases the font size */
+      padding: 10px 20px; /* Adds more padding for better visibility and easier clicking */
+      cursor: pointer; /* Ensures the cursor changes to a pointer to indicate it's clickable */
+  }
+
 </style>
