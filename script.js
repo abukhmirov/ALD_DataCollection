@@ -73,18 +73,18 @@ function finalizeData() {
 
     categories.forEach(category => {
         let interactions = JSON.parse(localStorage.getItem(currentBranch + '_' + category + '_interactions') || '[]');
-        interactions.forEach(interaction => {
-            const dataString = `Branch: ${currentBranch}\tCategory: ${category}\tChange: ${interaction.change}\tNote: ${interaction.note}\tID: ${interaction.id}\tTimestamp: ${timestamp}`;
-            const output = document.createElement('textarea');
-            output.value = dataString;
-            output.rows = 1;
-            output.cols = 100;
-            output.readOnly = true;
-            output.onclick = function() {
-                output.select();
-            };
-            outputContainer.appendChild(output);
-        });
+        let totalCount = interactions.reduce((sum, interaction) => sum + interaction.change, 0);
+        let notes = interactions.map(interaction => interaction.note).filter(note => note).join(", ");
+        const dataString = `Branch: ${currentBranch}\tCategory: ${category}\tTotal Count: ${totalCount}\tNotes: ${notes}\tFinalized: ${timestamp}`;
+        const output = document.createElement('textarea');
+        output.value = dataString;
+        output.rows = Math.max(1, dataString.split('\n').length + 1); // Set rows based on number of lines
+        output.cols = 100; // Width of the textarea
+        output.readOnly = true;
+        output.onclick = function() {
+            output.select();
+        };
+        outputContainer.appendChild(output);
     });
     document.body.appendChild(outputContainer);
 }
