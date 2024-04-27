@@ -3,86 +3,185 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Counter Application</title>
+  <title>Data Collection Dashboard</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="branch">
-    <select id="branchSelector" onchange="changeBranch()">
-      <option value="MA">MA</option>
-      <option value="SM">SM</option>
-      <option value="KO">KO</option>
-      <option value="SG">SG</option>
-      <option value="CW">CW</option>
-      <option value="SH">SH</option>
-    </select>
-  </div>
-  <div class="category">
-    <h2>Printing</h2>
-    <button onclick="decrement('printing')">-</button>
-    <span id="printing">0</span>
-    <button onclick="increment('printing')">+</button>
-  </div>
-  <div class="category">
-    <h2>Patron Device</h2>
-    <button onclick="decrement('patron')">-</button>
-    <span id="patron">0</span>
-    <button onclick="increment('patron')">+</button>
-  </div>
-  <div class="category">
-    <h2>Library Device</h2>
-    <button onclick="decrement('library')">-</button>
-    <span id="library">0</span>
-    <button onclick="increment('library')">+</button>
-  </div>
-  <div class="category">
-    <h2>Total</h2>
-    <span id="total">0</span>
-  </div>
-  <button onclick="resetBranchCounters()">Clear Data</button>
+  <header>
+    <h1>Data Collection Dashboard</h1>
+  </header>
+  <main>
+    <section class="branch-selector">
+      <label for="branchSelector">Select Branch:</label>
+      <select id="branchSelector" onchange="changeBranch()">
+        <option value="MA">MA</option>
+        <option value="SM">SM</option>
+        <option value="KO">KO</option>
+        <option value="SG">SG</option>
+        <option value="CW">CW</option>
+        <option value="SH">SH</option>
+      </select>
+    </section>
+    <section class="interactions">
+      <div class="category" id="category-printing">
+        <h2>Printing</h2>
+        <div class="count-controls">
+          <button onclick="decrement('printing')">-</button>
+          <span id="printing">0</span>
+          <button onclick="increment('printing')">+</button>
+        </div>
+      </div>
+      <div class="category" id="category-patron">
+        <h2>Patron Device</h2>
+        <div class="count-controls">
+          <button onclick="decrement('patron')">-</button>
+          <span id="patron">0</span>
+          <button onclick="increment('patron')">+</button>
+        </div>
+      </div>
+      <div class="category" id="category-library">
+        <h2>Library Device</h2>
+        <div class="count-controls">
+          <button onclick="decrement('library')">-</button>
+          <span id="library">0</span>
+          <button onclick="increment('library')">+</button>
+        </div>
+      </div>
+    </section>
+    <section class="summary">
+      <h2>Total Interactions</h2>
+      <span id="total">0</span>
+    </section>
+    <section class="actions">
+      <button onclick="finalizeData()">Finalize Interactions</button>
+      <button onclick="finalizeAllInteractions()">Finalize Day</button>
+      <button onclick="resetBranchCounters()">Clear Data</button>
+    </section>
+    <section id="outputContainer"></section>
+    <section id="allInteractionsContainer"></section>
+  </main>
+  <footer>
+    <p>&copy; 2024 Data Collection Platform</p>
+  </footer>
   <script src="script.js"></script>
-  <button onclick="finalizeData()">Finalize</button>
-  <button onclick="finalizeAllInteractions()">Finalize Day</button>
-  <div id="allInteractionsContainer"></div>
-  <div id="outputContainer"></div>
 </body>
 </html>
 
+
+
 <style>
   body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  }
+
+  header, footer {
+    background-color: #333;
+    color: #fff;
     text-align: center;
-    padding: 20px;
+    padding: 1em 0;
+  }
+
+  h1 {
+    margin: 0;
+  }
+
+  main {
+    max-width: 800px;
+    margin: 2em auto;
+    padding: 1em;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .branch-selector {
+    margin-bottom: 1em;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  select {
+    padding: 0.5em;
+    margin-left: 0.5em;
+    font-size: 1em;
   }
 
   .category {
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
+    margin-bottom: 1em;
+    padding: 1em;
+    background-color: #f9f9f9;
+  }
+
+  .count-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   button {
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 0.5em 1em;
+    margin: 0 1em;
+    font-size: 1em;
+    background-color: #5cb85c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
   }
 
+  button:hover {
+    background-color: #4cae4c;
+  }
+
   span {
-    margin: 0 20px;
-    font-size: 24px;
+    font-size: 2em;
   }
 
-  #outputContainer div {
-      margin-bottom: 10px;
-  }
-  button {
-      margin-left: 10px;
+  .summary {
+    text-align: center;
+    padding: 1em;
+    margin-bottom: 1em;
+    background-color: #dff0d8;
+    border: 1px solid #d6e9c6;
   }
 
-  #branchSelector {
-      font-size: 18px; /* Increases the font size */
-      padding: 10px 20px; /* Adds more padding for better visibility and easier clicking */
-      cursor: pointer; /* Ensures the cursor changes to a pointer to indicate it's clickable */
+  .actions {
+    text-align: center;
+    padding: 1em;
+  }
+
+  footer p {
+    margin: 0;
+  }
+
+  #outputContainer textarea, #allInteractionsContainer textarea {
+    width: 100%;
+    margin-bottom: 0.5em;
+  }
+
+  /* Responsive layout adjustments */
+  @media (max-width: 768px) {
+    header, footer {
+      text-align: left;
+      padding: 1em;
+    }
+
+    main {
+      padding: 1em;
+    }
+
+    .count-controls {
+      flex-direction: column;
+    }
+
+    button {
+      margin: 0.5em 0;
+    }
   }
 
 </style>
